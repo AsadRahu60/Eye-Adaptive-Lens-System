@@ -1,5 +1,6 @@
 from host.pi.storage import log_row
-import csv, os
+import csv
+import os
 import tempfile
 
 
