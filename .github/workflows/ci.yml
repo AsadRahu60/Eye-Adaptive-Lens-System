@@ -17,6 +17,7 @@ jobs:
       - run: npm install -g markdownlint-cli
       - run: markdownlint '**/*.md' -i node_modules
   arduino-lint:
+    if: ${{false}} # TEMP: skip until we add a proper sketch or library
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
