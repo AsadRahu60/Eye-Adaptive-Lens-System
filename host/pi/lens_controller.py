@@ -25,11 +25,8 @@ class OptoLens:
         self.ser = None
         if not self.dry_run:
             try:
-                self.ser = serial.Serial(  # type: ignore[attr-defined]
-                    port,
-                    baud,
-                    timeout=timeout,
-                )
+                # type: ignore[attr-defined]
+                self.ser = serial.Serial(port, baud, timeout=timeout)
             except Exception:
                 self.dry_run = True
 
@@ -37,12 +34,10 @@ class OptoLens:
         if self.dry_run or self.ser is None:
             print(f"[DRY-RUN] -> {cmd}")
             return "OK"
-        self.ser.write((cmd + "\n").encode())  # type: ignore[union-attr]
-        return (
-            self.ser.readline()  # type: ignore[union-attr]
-            .decode(errors="ignore")
-            .strip()
-        )
+        # type: ignore[union-attr]
+        self.ser.write((cmd + "\n").encode())
+        # type: ignore[union-attr]
+        return self.ser.readline().decode(errors="ignore").strip()
 
     def set_diopter(self, dpt: float) -> str:
         # TODO: replace with exact LD-4/ICC command when you have the manual.
@@ -50,7 +45,8 @@ class OptoLens:
 
     def close(self) -> None:
         if self.ser:
-            self.ser.close()  # type: ignore[union-attr]
+            # type: ignore[union-attr]
+            self.ser.close()
 
 
 def ramp(current: float, target: float, max_rate_dpt_s: float, dt: float) -> float:
