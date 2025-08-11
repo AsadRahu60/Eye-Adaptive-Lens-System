@@ -7,10 +7,8 @@ from typing import Optional
 
 try:
     import serial  # type: ignore
-    from serial import SerialException  # type: ignore
 except Exception:  # pragma: no cover
     serial = None
-    SerialException = Exception  # type: ignore
 
 
 class OptoLens:
@@ -22,7 +20,7 @@ class OptoLens:
         self.ser = None
         if not self.dry_run:
             try:
-                self.ser = serial.Serial(port, baud, timeout=timeout)
+                self.ser = serial.Serial(port, baud, timeout=timeout)  # type: ignore[attr-defined]
             except Exception:
                 self.dry_run = True
 
@@ -30,16 +28,16 @@ class OptoLens:
         if self.dry_run or self.ser is None:
             print(f"[DRY-RUN] -> {cmd}")
             return "OK"
-        self.ser.write((cmd + "\n").encode())
-        return self.ser.readline().decode(errors="ignore").strip()
+        self.ser.write((cmd + "\n").encode())  # type: ignore[union-attr]
+        return self.ser.readline().decode(errors="ignore").strip()  # type: ignore[union-attr]
 
     def set_diopter(self, dpt: float) -> str:
-        # TODO: replace with the exact command from your LD-4/ICC manual.
+        # TODO: replace with exact LD-4/ICC command when you have the manual.
         return self.send(f"SET DIOP {dpt:.2f}")
 
     def close(self) -> None:
         if self.ser:
-            self.ser.close()
+            self.ser.close()  # type: ignore[union-attr]
 
 
 def ramp(current: float, target: float, max_rate_dpt_s: float, dt: float) -> float:
