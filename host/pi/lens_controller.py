@@ -31,7 +31,9 @@ class OptoLens:
             print(f"[DRY-RUN] -> {cmd}")
             return "OK"
         self.ser.write((cmd + "\n").encode())  # type: ignore[union-attr]
-        return self.ser.readline().decode(errors="ignore").strip()  # type: ignore[union-attr]
+        return (
+            self.ser.readline().decode(errors="ignore").strip()
+        )  # type: ignore[union-attr]
 
     def set_diopter(self, dpt: float) -> str:
         # TODO: replace with exact LD-4/ICC command when you have the manual.
@@ -42,7 +44,9 @@ class OptoLens:
             self.ser.close()  # type: ignore[union-attr]
 
 
-def ramp(current: float, target: float, max_rate_dpt_s: float, dt: float) -> float:
+def ramp(
+    current: float, target: float, max_rate_dpt_s: float, dt: float
+) -> float:
     delta = target - current
     if abs(delta) <= max_rate_dpt_s * dt:
         return target
@@ -51,7 +55,9 @@ def ramp(current: float, target: float, max_rate_dpt_s: float, dt: float) -> flo
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Control lens (dry-run if no --port).")
+    p = argparse.ArgumentParser(
+        description="Control lens (dry-run if no --port)."
+    )
     p.add_argument("--port", default=None, help="e.g., /dev/ttyUSB0 or COM3")
     p.add_argument("--start", type=float, default=0.00)
     p.add_argument("--target", type=float, default=1.50)
