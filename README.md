@@ -29,7 +29,7 @@ Electronically tunable **per‑eye focus** + **LC shutter occlusion** for superv
 ## Why
 Traditional patching is static and hard to personalize. **Eye** explores dynamic, clinician‑configurable training: subtle per‑eye focus changes + intermittent occlusion, driven by context and fully logged.
 
-**MVP Goals**
+###MVP Goals
 - Per‑eye focus control (Optotune/Varioptic) with smooth ramps
 - Per‑eye LC occlusion (AC drive, no DC bias)
 - Sensors (ToF, ALS, IMU) → context (near/desk/outdoor)
