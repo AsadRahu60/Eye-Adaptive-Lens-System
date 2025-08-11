@@ -6,4 +6,3 @@ def policy(mode: str, base_L: float, base_R: float) -> Tuple[float, float, Dict]
     if mode == "near":
         shutters["R"] = 50.0
     return base_L, base_R, shutters
-
