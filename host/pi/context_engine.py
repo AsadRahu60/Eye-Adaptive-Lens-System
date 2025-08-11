@@ -4,3 +4,4 @@ def classify(distance_cm: float, lux: float, motion: float) -> str:
     if lux and lux > 5000:
         return "outdoor"
     return "desk"
+
