@@ -15,14 +15,21 @@ class OptoLens:
     """Minimal controller for Optotune LD-4/ICC (placeholder protocol)."""
 
     def __init__(
-        self, port: Optional[str], baud: int = 115200, timeout: float = 0.2
+        self,
+        port: Optional[str],
+        baud: int = 115200,
+        timeout: float = 0.2,
     ) -> None:
         self.port = port
         self.dry_run = port is None or serial is None
         self.ser = None
         if not self.dry_run:
             try:
-                self.ser = serial.Serial(port, baud, timeout=timeout)  # type: ignore[attr-defined]
+                self.ser = serial.Serial(  # type: ignore[attr-defined]
+                    port,
+                    baud,
+                    timeout=timeout,
+                )
             except Exception:
                 self.dry_run = True
 
@@ -31,7 +38,11 @@ class OptoLens:
             print(f"[DRY-RUN] -> {cmd}")
             return "OK"
         self.ser.write((cmd + "\n").encode())  # type: ignore[union-attr]
-        return self.ser.readline().decode(errors="ignore").strip()  # type: ignore[union-attr]
+        return (
+            self.ser.readline()  # type: ignore[union-attr]
+            .decode(errors="ignore")
+            .strip()
+        )
 
     def set_diopter(self, dpt: float) -> str:
         # TODO: replace with exact LD-4/ICC command when you have the manual.
@@ -51,7 +62,9 @@ def ramp(current: float, target: float, max_rate_dpt_s: float, dt: float) -> flo
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Control lens (dry-run if no --port).")
+    p = argparse.ArgumentParser(
+        description="Control lens (dry-run if no --port)."
+    )
     p.add_argument("--port", default=None, help="e.g., /dev/ttyUSB0 or COM3")
     p.add_argument("--start", type=float, default=0.00)
     p.add_argument("--target", type=float, default=1.50)
