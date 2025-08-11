@@ -1,6 +1,6 @@
 # Eye — Adaptive Lens System for Amblyopia (R&D Prototype)
 
-> **Disclaimer:** Research/education prototype. **Not a medical device.** Do not use for self‑treatment.
+> **Disclaimer:** Research/education prototype. **Not a medical device.** Do not use for self-treatment.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/AsadRahu60/eye-adaptive-lens/ci.yml?label=CI)](https://github.com/AsadRahu60/eye-adaptive-lens/actions)
@@ -8,8 +8,7 @@
 ![Made with: ESP32 + Python](https://img.shields.io/badge/made%20with-ESP32%20%2B%20Python-blue)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](CONTRIBUTING.md)
 
-
-Electronically tunable **per‑eye focus** + **LC shutter occlusion** for supervised amblyopia research tasks. Sensor‑aware modes (near/desk/outdoor), **manual + automated therapy profiles**, and **QA‑first** documentation (URS → SRS → RTM → Tests).
+Electronically tunable **per-eye focus** + **LC shutter occlusion** for supervised amblyopia research tasks. Sensor-aware modes (near/desk/outdoor), **manual + automated therapy profiles**, and **QA-first** documentation (URS → SRS → RTM → Tests).
 
 ---
 
@@ -27,11 +26,11 @@ Electronically tunable **per‑eye focus** + **LC shutter occlusion** for superv
 ---
 
 ## Why
-Traditional patching is static and hard to personalize. **Eye** explores dynamic, clinician‑configurable training: subtle per‑eye focus changes + intermittent occlusion, driven by context and fully logged.
+Traditional patching is static and hard to personalize. **Eye** explores dynamic, clinician-configurable training: subtle per-eye focus changes + intermittent occlusion, driven by context and fully logged.
 
 ### MVP Goals
-- Per‑eye focus control (Optotune/Varioptic) with smooth ramps
-- Per‑eye LC occlusion (AC drive, no DC bias)
+- Per-eye focus control (Optotune/Varioptic) with smooth ramps
+- Per-eye LC occlusion (AC drive, no DC bias)
 - Sensors (ToF, ALS, IMU) → context (near/desk/outdoor)
 - BLE UI (manual sliders + profiles) and data logging
 
@@ -48,7 +47,7 @@ flowchart LR
   end
 
   subgraph Control
-    ESP[ESP32‑S3\nSensors + BLE + LC drive]:::ctrl
+    ESP[ESP32-S3\nSensors + BLE + LC drive]:::ctrl
     PI[Raspberry Pi 5\nPolicy + Logs + UI]:::ctrl
   end
 
@@ -57,12 +56,13 @@ flowchart LR
   LCSL <-- PWM AC --> ESP
   LCSR <-- PWM AC --> ESP
   ESP <-- I2C --> SENSORS[VL53L1X + TSL2591 + BNO055]:::sens
-  PI <-- BLE / Wi‑Fi --> APP[Mobile / Web UI]:::ui
+  PI <-- BLE / Wi-Fi --> APP[Mobile / Web UI]:::ui
 
   classDef opt fill:#f6ffed,stroke:#47c73b;
   classDef ctrl fill:#eef7ff,stroke:#2f6feb;
   classDef sens fill:#fff6e6,stroke:#e59f00;
   classDef ui fill:#f3e8ff,stroke:#7c3aed;
+
 ```
 
 **Stack:** ESP32‑S3 (Arduino), Python 3 host, BLE GATT, I²C sensors, H‑bridge for LC shutters, Optotune/Varioptic lens drivers, optional Flutter app.
@@ -87,16 +87,15 @@ Docs: [`docs/URS.md`](docs/URS.md) · [`docs/SRS.md`](docs/SRS.md) · [`docs/RTM
 3. Flash `firmware/esp32/main.cpp`; check serial output.
 
 ### Host (Pi/PC)
-```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt -r requirements-dev.txt
 python host/pi/lens_controller.py   # update serial ports and driver commands
-```
+
 
 ---
 
 ## Project Layout
-```
+
 .
 ├─ firmware/esp32/               # BLE + sensors + LC shutters
 ├─ host/pi/                      # Lens driver control + policy + logs
@@ -107,7 +106,7 @@ python host/pi/lens_controller.py   # update serial ports and driver commands
 ├─ .github/workflows/ci.yml
 ├─ README.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md
 └─ LICENSE  CHANGELOG.md  .gitignore
-```
+
 
 ---
 
