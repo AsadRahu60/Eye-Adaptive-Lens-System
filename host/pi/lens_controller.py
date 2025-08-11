@@ -14,7 +14,9 @@ except Exception:  # pragma: no cover
 class OptoLens:
     """Minimal controller for Optotune LD-4/ICC (placeholder protocol)."""
 
-    def __init__(self, port: Optional[str], baud: int = 115200, timeout: float = 0.2) -> None:
+    def __init__(
+        self, port: Optional[str], baud: int = 115200, timeout: float = 0.2
+    ) -> None:
         self.port = port
         self.dry_run = port is None or serial is None
         self.ser = None
