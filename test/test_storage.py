@@ -1,5 +1,6 @@
 from host.pi.storage import log_row
-import csv, os, tempfile
+import csv, os
+import tempfile
 
 
 def test_log_row_writes_header_and_data():
