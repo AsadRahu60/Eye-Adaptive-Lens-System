@@ -1,5 +1,6 @@
 import csv
 
+
 def log_row(path: str, row: dict):
     write_header = True
     try:
