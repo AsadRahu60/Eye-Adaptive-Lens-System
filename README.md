@@ -4,9 +4,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/AsadRahu60/eye-adaptive-lens/ci.yml?label=CI)](https://github.com/AsadRahu60/eye-adaptive-lens/actions)
-[![Code style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)]()
-[![Made with: ESP32 + Python](https://img.shields.io/badge/made%20with-ESP32%20%2B%20Python-blue)]()
+![Code style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)
+![Made with: ESP32 + Python](https://img.shields.io/badge/made%20with-ESP32%20%2B%20Python-blue)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](CONTRIBUTING.md)
+
 
 Electronically tunable **per‑eye focus** + **LC shutter occlusion** for supervised amblyopia research tasks. Sensor‑aware modes (near/desk/outdoor), **manual + automated therapy profiles**, and **QA‑first** documentation (URS → SRS → RTM → Tests).
 
