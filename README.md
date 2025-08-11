@@ -4,8 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/AsadRahu60/eye-adaptive-lens/ci.yml?label=CI)](https://github.com/AsadRahu60/eye-adaptive-lens/actions)
-![Code style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)
-![Made with: ESP32 + Python](https://img.shields.io/badge/made%20with-ESP32%20%2B%20Python-blue)
+[![Code style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Made with: ESP32 + Python](https://img.shields.io/badge/made%20with-ESP32%20%2B%20Python-blue)](https://www.espressif.com/en/products/socs/esp32-s3)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](CONTRIBUTING.md)
 
 Electronically tunable **per-eye focus** + **LC shutter occlusion** for supervised amblyopia research tasks. Sensor-aware modes (near/desk/outdoor), **manual + automated therapy profiles**, and **QA-first** documentation (URS → SRS → RTM → Tests).
@@ -95,7 +95,7 @@ python host/pi/lens_controller.py   # update serial ports and driver commands
 ---
 
 ## Project Layout
-
+```markdown
 .
 ├─ firmware/esp32/               # BLE + sensors + LC shutters
 ├─ host/pi/                      # Lens driver control + policy + logs
@@ -106,7 +106,7 @@ python host/pi/lens_controller.py   # update serial ports and driver commands
 ├─ .github/workflows/ci.yml
 ├─ README.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md
 └─ LICENSE  CHANGELOG.md  .gitignore
-
+```
 
 ---
 
