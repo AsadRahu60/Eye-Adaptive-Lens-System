@@ -31,9 +31,7 @@ class OptoLens:
             print(f"[DRY-RUN] -> {cmd}")
             return "OK"
         self.ser.write((cmd + "\n").encode())  # type: ignore[union-attr]
-        return (
-            self.ser.readline().decode(errors="ignore").strip()
-        )  # type: ignore[union-attr]
+        return (self.ser.readline().decode(errors="ignore").strip())  # type: ignore[union-attr]
 
     def set_diopter(self, dpt: float) -> str:
         # TODO: replace with exact LD-4/ICC command when you have the manual.
@@ -44,9 +42,7 @@ class OptoLens:
             self.ser.close()  # type: ignore[union-attr]
 
 
-def ramp(
-    current: float, target: float, max_rate_dpt_s: float, dt: float
-) -> float:
+def ramp(current: float, target: float, max_rate_dpt_s: float, dt: float) -> float:
     delta = target - current
     if abs(delta) <= max_rate_dpt_s * dt:
         return target
