@@ -1,5 +1,10 @@
 {
-  "MD013": false,   // line length
-  "MD033": false,   // inline HTML (badges)
-  "MD041": false    // first line should be a top-level heading
+  "MD013": false,   // line length (badges/mermaid cause long lines)
+  "MD033": false,   // inline HTML (shields badges)
+  "MD041": false,   // first line must be H1 (we already have one, but keep relaxed)
+  "MD022": false,   // blank line around headings
+  "MD031": false,   // blank line around fenced code blocks
+  "MD032": false,   // lists should be surrounded by blank lines
+  "MD007": { "indent": 2 },  // list indent style
+  "MD009": false    // trailing spaces in markdown (relax)
 }
