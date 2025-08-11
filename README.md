@@ -91,7 +91,6 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt -r requirements-dev.txt
 python host/pi/lens_controller.py   # update serial ports and driver commands
 
-
 ---
 
 ## Project Layout
