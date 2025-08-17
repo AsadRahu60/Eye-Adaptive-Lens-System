@@ -57,6 +57,14 @@ def ramp(current: float, target: float, max_rate_dpt_s: float, dt: float) -> flo
     return current + step
 
 
+def ramp_focus(start_dpt: float, end_dpt: float, duration_s: float):
+    """Linearly ramp lens focus between start and end diopters over duration."""
+    steps = 20
+    for i in range(steps + 1):
+        level = start_dpt + (end_dpt - start_dpt) * i / steps
+        print(f"Set lens to {level:.2f} dpt")
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description="Control lens (dry-run if no --port).")
     p.add_argument("--port", default=None, help="e.g., /dev/ttyUSB0 or COM3")
