@@ -57,12 +57,42 @@ def ramp(current: float, target: float, max_rate_dpt_s: float, dt: float) -> flo
     return current + step
 
 
-def ramp_focus(start_dpt: float, end_dpt: float, duration_s: float):
-    """Linearly ramp lens focus between start and end diopters over duration."""
-    steps = 20
+def ramp_focus(
+    start_dpt: float,
+    end_dpt: float,
+    duration_s: float,
+    steps: int = 20,
+    apply=None,
+    sleep: bool = False,
+):
+    """
+    Create a linear ramp of focus values from start_dpt to end_dpt.
+
+    - steps: number of intervals (path will have steps+1 points)
+    - apply: optional callable applied to each setpoint (e.g., lens.set_diopter)
+    - sleep: if True, sleep duration_s/steps between points (avoid in tests)
+    Returns: list of setpoints (floats)
+    """
+    if steps <= 0:
+        # Edge case: jump directly to target
+        path = [end_dpt]
+        if apply:
+            apply(end_dpt)
+        return path
+
+    dt = duration_s / steps if duration_s > 0 else 0.0
+    path = []
     for i in range(steps + 1):
-        level = start_dpt + (end_dpt - start_dpt) * i / steps
-        print(f"Set lens to {level:.2f} dpt")
+        level = start_dpt + (end_dpt - start_dpt) * (i / steps)
+        path.append(level)
+        if apply:
+            apply(level)
+        else:
+            # Dry-run print to make behavior observable without hardware
+            print(f"[RAMP] {level:.2f} dpt")
+        if sleep and dt > 0:
+            time.sleep(dt)
+    return path
 
 
 def main() -> int:
