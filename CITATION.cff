@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this repo, please cite it as below."
+authors:
+  - family-names: "Rahoo"
+    given-names: "Asadullah"
+title: "Eye — Adaptive Lens System for Amblyopia (R&D Prototype)"
+version: 0.1.0
+date-released: 2025-08-17
+url: "https://github.com/AsadRahu60/eye-adaptive-lens"
