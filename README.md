@@ -26,7 +26,7 @@ Electronically tunable **per-eye focus** + **LC shutter occlusion** for supervis
 ---
 
 ## Why
-Traditional patching is static and hard to personalize. **Eye** explores dynamic, clinician-configurable training: subtle per-eye focus changes + intermittent occlusion, driven by context and fully logged.
+I grew up with amblyopia and want a treatment path that’s adaptive, comfortable, and measurable—so patients actually stick with it. This repo is a research prototype to test whether safe, gradual per-eye focus changes plus transparent occlusion can improve adherence and outcomes, where as the traditional patching is static and hard to personalize. **Eye** explores dynamic, clinician-configurable training: subtle per-eye focus changes + intermittent occlusion, driven by context and fully logged.
 
 ### MVP Goals
 - Per-eye focus control (Optotune/Varioptic) with smooth ramps
