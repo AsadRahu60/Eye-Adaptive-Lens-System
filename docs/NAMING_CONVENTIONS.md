@@ -116,4 +116,4 @@ chore: bump flake8 to 7.x
 
 ---
 
-_Last updated: 2025-08-20_
+### Last updated: 2025-08-20

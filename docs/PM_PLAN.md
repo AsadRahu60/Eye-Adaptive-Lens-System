@@ -81,4 +81,4 @@ Each stage has **exit criteria** in `docs/ROADMAP.md`.
   ETHICS_AND_SAFETY, PM_PLAN, RISK_REGISTER, NAMING_CONVENTIONS
 - **Proposal PDFs:** `docs/PROPOSAL.pdf` (detailed), `docs/PROPOSAL_SHORT.pdf` (2–3 pages)
 
-_Last updated: YYYY-MM-DD_
+### Last updated: 2025-08-20
