@@ -1,0 +1,5 @@
+# eye, distance_cm, setpoint_dpt, measured_dpt, note
+left,40,2.50,2.45,bench
+left,100,1.00,0.98,bench
+right,40,2.50,2.46,bench
+right,100,1.00,0.99,bench
