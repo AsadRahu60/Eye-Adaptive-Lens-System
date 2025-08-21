@@ -3,7 +3,7 @@
 Short, practical plan for building the **Eye — Adaptive Lens System** from bench demo to wearable prototype.  
 We keep stages **S1–S6** simple and add **exit criteria** so “done” is unambiguous.
 
-**Quality gates for every stage**
+## Quality gates for every stage
 - CI is green (black, flake8, pytest, markdownlint, arduino-lint)
 - Safety defaults on (watchdog + conservative ramps)
 - A short note added to `docs/CHANGELOG.md`

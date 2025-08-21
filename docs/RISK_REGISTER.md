@@ -30,5 +30,3 @@ Severity ≥ 12 require an owner and dated mitigation task.
 - If any risk escalates to **Sev ≥ 15**, pause new features until mitigated.
 
 ### Last reviewed: YYYY-MM-DD
-
-
