@@ -29,4 +29,6 @@ Severity ≥ 12 require an owner and dated mitigation task.
 - Upload scope screenshots for R2 to `docs/tests/` and reference them in PRs.
 - If any risk escalates to **Sev ≥ 15**, pause new features until mitigated.
 
-_Last reviewed: YYYY-MM-DD_
+### Last reviewed: YYYY-MM-DD
+
+

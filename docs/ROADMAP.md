@@ -89,4 +89,4 @@ We keep stages **S1–S6** simple and add **exit criteria** so “done” is una
 - Adherence proxy: session completion %, occlusion duty applied
 - Comfort: symptom checklist (0–10), target ≤ 2 median
 
-_(Last updated: YYYY-MM-DD)_
+### (Last updated: YYYY-MM-DD)

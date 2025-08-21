@@ -56,4 +56,4 @@ This file enumerates key tests linked to requirements. See `docs/RTM.md` for map
 - Keep tests CI-friendly; hardware tests are **manual** with screenshots uploaded to `docs/tests/`.
 - See `docs/TEST_STRATEGY.md` for levels, tools, and coverage philosophy.
 
-_Last updated: YYYY-MM-DD_
+### Last updated: YYYY-MM-DD
