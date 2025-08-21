@@ -6,4 +6,4 @@
 - When exporting data, remove exact timestamps or offset them if needed.
 - Version the ML model and record model hash in reports for reproducibility.
 
-### Last updated: 2025-08-17
+## Last updated: 2025-08-17
