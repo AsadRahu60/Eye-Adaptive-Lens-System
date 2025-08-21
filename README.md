@@ -91,6 +91,27 @@ override ML outputs. See `docs/ML_OVERVIEW.md`.
 2. Wire LC shutter via DRV8833; sensors to I²C.
 3. Flash `firmware/esp32/main.cpp`; check serial output.
 
++## 🔎 For Supervisors/Admissions — Start Here
++1. **Architecture:** `docs/ARCHITECTURE.md`
++2. **Roadmap (S1–S6):** `docs/ROADMAP.md` with exit criteria
++3. **Safety & Risk:** `docs/SAFETY_PROTOCOLS.md`, `docs/RISK_REGISTER.md`
++4. **Testing approach:** `docs/TEST_STRATEGY.md`, `docs/TEST_CASES.md`
++5. **ML overview (optional):** `docs/ML_OVERVIEW.md` (guardrailed, CI-safe)
++6. **Proposal (short):** `docs/PROPOSAL_SHORT.pdf` — 2 pages
++
++## Machine Learning (optional assist)
++The **ML module** in `host/pi/ml/` trains a small logistic model on session data to **suggest**
++therapy adjustments (e.g., occlusion duty). **Hard safety clamps** (duty/diopter) always override
++ML outputs; a rule-based fallback is used if the model is absent or confidence is low.
++See `docs/ML_OVERVIEW.md` and `docs/DATA_PRIVACY.md`.
++
++### ML quick demo (synthetic, CI-safe)
++```bash
++python host/pi/ml/make_synthetic.py
++python host/pi/ml/train.py
++pytest -q
++```
+
 ### Host (Pi/PC)
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt -r requirements-dev.txt
@@ -103,13 +124,17 @@ python host/pi/lens_controller.py   # update serial ports and driver commands
 .
 ├─ firmware/esp32/               # BLE + sensors + LC shutters
 ├─ host/pi/                      # Lens driver control + policy + logs
+│  └─ ml/                        # Safe ML assist (training + inference)
 ├─ apps/flutter_mobile/          # future BLE app
 ├─ calibration/
-├─ tests/automation/
-├─ docs/                         # URS, SRS, RTM, Test Strategy, etc.
+├─ tests/                        # pytest tests (incl. test_ml.py)
+├─ docs/                         # URS, SRS, RTM, Roadmap, Safety, ML, etc.
+├─ data/sessions/                # sample CSV logs (kept anon)
+├─ models/                       # saved model artifacts (joblib)
 ├─ .github/workflows/ci.yml
 ├─ README.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md
 └─ LICENSE  CHANGELOG.md  .gitignore
+
 ```
 
 ---
