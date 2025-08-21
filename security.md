@@ -2,7 +2,7 @@
 
 This is a research prototype. If you discover a vulnerability or unsafe behavior:
 
-- Open a PRIVATE issue or email: asadullahrahoo98@gmail.com
+- Open a PRIVATE issue or email: [asadullahrahoo98@gmail.com](mailto:asadullahrahoo98@gmail.com)
 - Do not include sensitive data in logs
 - Safety-critical bugs (optical/electrical) should disable hardware quickly
 
