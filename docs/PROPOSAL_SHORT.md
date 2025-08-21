@@ -1,7 +1,8 @@
 AI-Assisted Adaptive Optics for Personalized Amblyopia Therapy (R&D Prototype)
 Candidate: Asadullah Rahoo
-Email: asadullahrahoo98@gmail.com · Phone: +49 176 47604330
-GitHub: https://github.com/AsadRahu60/eye-adaptive-lens
+[asadullahrahoo98@gmail.com](mailto:asadullahrahoo98@gmail.com)
+[GitHub Repository](https://github.com/AsadRahu60/eye-adaptive-lens)· Phone: +49 176 47604330
+
 Current status: M.Sc. Computer Science (University of Passau); B.Eng. Electronics
 Keywords: tunable lenses, LC occlusion, embedded systems, safety-critical control, vision therapy, ML assist
 R&D prototype — not a medical device. All experimental work will follow conservative safety limits and proceed only under appropriate supervision and ethics approval.
