@@ -61,16 +61,29 @@ def run_mock(duration: float, interval: float, out: Path | None) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser()
-    p.add_argument("--mock", action="store_true", default=True,
-                   help="use generated packets (default)")
-    p.add_argument("--ble", action="store_true",
-                   help="read from BLE characteristic (needs hardware)")
-    p.add_argument("--interval", type=float, default=0.5,
-                   help="seconds between packets")
-    p.add_argument("--duration", type=float, default=10.0,
-                   help="total seconds to stream")
-    p.add_argument("--out", type=str, default="data/sessions/demo.csv",
-                   help="optional CSV output path")
+    p.add_argument(
+        "--mock",
+        action="store_true",
+        default=True,
+        help="use generated packets (default)",
+    )
+    p.add_argument(
+        "--ble",
+        action="store_true",
+        help="read from BLE characteristic (needs hardware)",
+    )
+    p.add_argument(
+        "--interval", type=float, default=0.5, help="seconds between packets"
+    )
+    p.add_argument(
+        "--duration", type=float, default=10.0, help="total seconds to stream"
+    )
+    p.add_argument(
+        "--out",
+        type=str,
+        default="data/sessions/demo.csv",
+        help="optional CSV output path",
+    )
     args = p.parse_args()
 
     out = Path(args.out) if args.out else None
