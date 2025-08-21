@@ -1,9 +1,22 @@
 # Software Requirements Specification (SRS)
 
-- FR-001 BLE GATT for diopters/opacity/telemetry
-- FR-002 Sensors at ≥10 Hz (VL53L1X, TSL2591, BNO055)
-- FR-003 Context classification (near/desk/outdoor)
-- FR-004 Therapy policies (IO, contrast-balancing)
-- FR-005 Safety: slew ≤0.25 dpt/s; watchdog ≤500 ms to neutral
-- FR-006 Logging CSV/SQLite; export
-- NFR: Performance ≤150 ms latency; Reliability <0.1% drops (bench 24h)
+## Scope
+Software stack controls adaptive lenses and LC shutters, logs therapy data, and provides UI integration.
+
+## Functional Requirements
+- FR1: Control per-eye tunable lenses (smooth ramp, step, calibration).
+- FR2: Control LC shutters (gradual occlusion, programmable profiles).
+- FR3: Read sensor inputs (distance, ambient light, IMU).
+- FR4: Communicate with host app via BLE.
+- FR5: Store and retrieve therapy logs.
+
+## Non-Functional Requirements
+- Reliability: >99% successful actuation in bench tests.
+- Latency: <200ms for sensor-to-actuator response.
+- Safety: watchdog resets, emergency shutdown.
+- Portability: ESP32 + Python 3 host.
+
+## Interfaces
+- Firmware: C++ (Arduino ESP32 core).
+- Host: Python modules.
+- UI: BLE GATT, optional Flutter app.

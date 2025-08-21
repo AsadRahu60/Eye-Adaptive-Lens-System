@@ -1,9 +1,10 @@
 # Requirements Traceability Matrix (RTM)
 
-| UR | FR | Tests |
-|---|---|---|
-| UR-001 | FR-001, FR-007 | TC-FOCUS-001..003 |
-| UR-002 | FR-001, FR-004 | TC-OCCL-001..002 |
-| UR-003 | FR-001, FR-004 | TC-UI-001..003 |
-| UR-004 | FR-006 | TC-LOG-001..002 |
-| UR-005 | FR-005 | TC-SAFE-001..006 |
+| URS ID | Requirement                                   | SRS Ref | Test Case ID |
+|--------|-----------------------------------------------|---------|--------------|
+| URS-1  | Per-eye focus control (±6D)                   | FR1     | TC-Focus-01  |
+| URS-2  | Per-eye shutter occlusion                     | FR2     | TC-Occl-01   |
+| URS-3  | Context-aware modes (near/desk/outdoor)       | FR3     | TC-Context-01|
+| URS-4  | Therapy session logging                       | FR5     | TC-Log-01    |
+| URS-5  | Manual override                               | FR4     | TC-UI-01     |
+| URS-6  | Patient safety (bounded transitions)          | NFR-S1  | TC-Safety-01 |
