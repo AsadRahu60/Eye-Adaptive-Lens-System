@@ -80,6 +80,14 @@ Docs: [`docs/URS.md`](docs/URS.md) · [`docs/SRS.md`](docs/SRS.md) · [`docs/RTM
 
 ---
 
+**Optional ML module:** `host/pi/ml/` trains a logistic model on session data
+to suggest small therapy adjustments. Safety clamps (duty/diopter) always
+override ML outputs. See `docs/ML_OVERVIEW.md`.
+
+
+---
+
+
 ## Quick Start
 ### Firmware (ESP32‑S3)
 1. Install Arduino IDE + ESP32 core.
