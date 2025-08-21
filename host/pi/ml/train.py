@@ -21,9 +21,7 @@ def load_csv(path: Path) -> Tuple[List[List[float]], List[int]]:
 def main() -> None:
     data_path = Path("data/sessions/synth_training.csv")
     if not data_path.exists():
-        raise SystemExit(
-            "data not found. Run: python host/pi/ml/make_synthetic.py"
-        )
+        raise SystemExit("data not found. Run: python host/pi/ml/make_synthetic.py")
     X, y = load_csv(data_path)
     model = TherapyModel.new()
     model.fit(X, y)

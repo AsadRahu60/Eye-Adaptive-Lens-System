@@ -12,8 +12,8 @@ DUTY_STEP = 0.05
 MAX_DEFOCUS = 0.50  # +/- D allowed by policy
 DEFOCUS_STEP = 0.10
 
-UP_THRESH = 0.70   # if p_improve high -> increase challenge a bit
-DOWN_THRESH = 0.30 # if p_improve low  -> decrease challenge
+UP_THRESH = 0.70  # if p_improve high -> increase challenge a bit
+DOWN_THRESH = 0.30  # if p_improve low  -> decrease challenge
 MIN_COMFORT = 6.0  # require min comfort to push challenge up
 
 

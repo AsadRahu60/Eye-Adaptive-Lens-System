@@ -8,6 +8,7 @@ from sklearn.linear_model import LogisticRegression  # type: ignore
 @dataclass
 class TherapyModel:
     """Thin wrapper over scikit-learn LogisticRegression."""
+
     clf: LogisticRegression
 
     @classmethod

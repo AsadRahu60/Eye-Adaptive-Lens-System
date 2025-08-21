@@ -17,11 +17,7 @@ def synth_row() -> dict:
 
     # Simple ground-truth heuristic for label:
     # success if moderate duty and decent comfort and reasonable distance
-    success = (
-        (prev_duty <= 0.25)
-        and (comfort >= 6.0)
-        and (50.0 <= dist_cm <= 100.0)
-    )
+    success = (prev_duty <= 0.25) and (comfort >= 6.0) and (50.0 <= dist_cm <= 100.0)
     y = 1 if success else 0
 
     return {
