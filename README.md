@@ -2,8 +2,6 @@
   <img src="assets/social-preview.png" alt="Eye — Adaptive Lens System" width="100%">
 </p>
 
-
-
 # Eye — Adaptive Lens System for Amblyopia (R&D Prototype)
 
 > **Disclaimer:** Research/education prototype. **Not a medical device.** Do not use for self-treatment.
