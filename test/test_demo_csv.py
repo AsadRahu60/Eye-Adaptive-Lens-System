@@ -1,5 +1,5 @@
 from pathlib import Path
-import csv 
+import csv
 import subprocess
 import sys
 
