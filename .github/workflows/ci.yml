@@ -9,12 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'  # speeds up installs
+
       - run: pip install -r requirements.txt -r requirements-dev.txt
+
       - run: black --check .
       - run: flake8
+
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
 
@@ -24,11 +29,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      # ✅ No npm install; uses a prebuilt action
+      - name: Markdownlint
+        uses: nosborn/github-action-markdown-cli@v3.3.0
         with:
-          node-version: '20'
-      - run: npm install -g markdownlint-cli
-      - run: markdownlint "**/*.md" -c .markdownlint.json -i node_modules
+          files: "**/*.md"
+          config_file: ".markdownlint.json"
+          ignore_files: "node_modules"
 
   arduino-lint:
     runs-on: ubuntu-latest
