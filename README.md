@@ -26,7 +26,9 @@ Electronically tunable **per-eye focus** + **LC shutter occlusion** for supervis
 ---
 
 ## Why
-I grew up with amblyopia and want a treatment path that’s adaptive, comfortable, and measurable—so patients actually stick with it. This repo is a research prototype to test whether safe, gradual per-eye focus changes plus transparent occlusion can improve adherence and outcomes, where as the traditional patching is static and hard to personalize. **Eye** explores dynamic, clinician-configurable training: subtle per-eye focus changes + intermittent occlusion, driven by context and fully logged.
+I grew up with amblyopia and want a treatment path that’s adaptive, comfortable, and measurable—so patients actually stick with it.**Amblyopia focus.** Amblyopia is a binocular imbalance—reduced acuity and suppression in one eye—that’s often treated with static occlusion (patching), which can be hard to personalize and sustain. **Eye** provides a **programmable, supervised research instrument** to deliver **graded per-eye stimuli** (diopter ramps and LC occlusion) with strict safety guardrails and full telemetry. This supports experiments on **binocular balance**, comfort envelopes, and adherence—generating clean, reproducible logs for clinician-led protocols. *(R&D only — not a medical device.)*
+ 
+This repo is a research prototype to test whether safe, gradual per-eye focus changes plus transparent occlusion can improve adherence and outcomes, where as the traditional patching is static and hard to personalize. **Eye** explores dynamic, clinician-configurable training: subtle per-eye focus changes + intermittent occlusion, driven by context and fully logged.
 
 ### MVP Goals
 - Per-eye focus control (Optotune/Varioptic) with smooth ramps
@@ -98,6 +100,8 @@ override ML outputs. See `docs/ML_OVERVIEW.md`.
 +4. **Testing approach:** `docs/TEST_STRATEGY.md`, `docs/TEST_CASES.md`
 +5. **ML overview (optional):** `docs/ML_OVERVIEW.md` (guardrailed, CI-safe)
 +6. **Proposal (short):** `docs/PROPOSAL_SHORT.pdf` — 2 pages
+
+
 +
 +## Machine Learning (optional assist)
 +The **ML module** in `host/pi/ml/` trains a small logistic model on session data to **suggest**

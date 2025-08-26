@@ -1,8 +1,10 @@
 from pathlib import Path
-import csv, subprocess, sys
+import csv 
+import subprocess
+import sys
 
 REPO = Path(__file__).resolve().parents[1]
-SAMPLE = REPO / "data/sessions/demo_session_small.csv"
+SAMPLE = REPO / "data/samples/demo_session_small.csv"
 RAW = REPO / "data/demo_session.csv"
 DEMO = REPO / "host/pi/telemetry_demo.py"
 
