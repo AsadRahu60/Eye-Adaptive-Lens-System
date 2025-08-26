@@ -15,28 +15,34 @@ jobs:
           python-version: '3.11'
           cache: 'pip'  # speeds up installs
 
-      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
 
-      - run: black --check .
-      - run: flake8
+      - name: Check formatting (Black)
+        run: black --check .
+
+      - name: Run flake8 lint
+        run: flake8
 
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
 
-      - run: pytest -q
+      - name: Run pytest
+        run: pytest -q
 
   markdown:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      # ✅ No npm install; uses a prebuilt action
-      - name: Markdownlint
-        uses: nosborn/github-action-markdown-cli@v3.3.0
+      # ✅ Markdownlint without Docker/npm global install
+      - name: Markdownlint (CLI2)
+        uses: DavidAnson/markdownlint-cli2-action@v16
         with:
-          files: "**/*.md"
-          config_file: ".markdownlint.json"
-          ignore_files: "node_modules"
+          globs: |
+            **/*.md
+            !node_modules
+          config: .markdownlint.json
 
   arduino-lint:
     runs-on: ubuntu-latest
