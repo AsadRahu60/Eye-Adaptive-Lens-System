@@ -3,6 +3,7 @@ import csv
 
 SAMPLE = Path("data/samples/demo_session_small.csv")
 
+
 def test_sample_csv_exists_and_has_header():
     assert SAMPLE.exists(), f"Missing sample CSV: {SAMPLE}"
     with SAMPLE.open() as f:
