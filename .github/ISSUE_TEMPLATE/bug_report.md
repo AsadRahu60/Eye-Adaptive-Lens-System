@@ -4,18 +4,18 @@ about: Report a problem in firmware/host/docs
 labels: bug
 ---
 
-**Describe the bug**
+### Describe the bug
 What happened?
 
-**To Reproduce**
+### To Reproduce
 Steps and commands:
 
-**Expected behavior**
+### Expected behavior
 What should have happened?
 
-**Screenshots/Logs**
+### Screenshots/Logs
 Attach console output, scope screenshots if optics-related.
 
-**Environment**
+### Environment
 - firmware/host commit:
 - OS / board:
