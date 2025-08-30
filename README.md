@@ -105,8 +105,6 @@ override ML outputs. See `docs/ML_OVERVIEW.md`.
 +5. **ML overview (optional):** `docs/ML_OVERVIEW.md` (guardrailed, CI-safe)
 +6. **Proposal (short):** `docs/PROPOSAL_SHORT.pdf` — 2 pages
 
-
-+
 +## Machine Learning (optional assist)
 +The **ML module** in `host/pi/ml/` trains a small logistic model on session data to **suggest**
 +therapy adjustments (e.g., occlusion duty). **Hard safety clamps** (duty/diopter) always override
