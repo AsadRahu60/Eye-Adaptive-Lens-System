@@ -1,0 +1,455 @@
+<!-- Chosen Palette: Warm Neutrals & Subtle Accents -->
+<!-- Application Structure Plan: The SPA is structured as a vertical, single-page dashboard. The user is introduced to the concept at the top, followed by a central interactive section with a simulated eye and lens system. A control panel allows the user to change simulated gaze distance, and dynamic charts and a log display real-time system responses. This structure was chosen to guide the user through the system's purpose, its operational flow, and its core metrics in a linear, narrative fashion, reinforcing the proposal's key points. -->
+<!-- Visualization & Content Choices: The central eye/lens system is a HTML/CSS/Unicode diagram to avoid SVG and allow for dynamic styling. Charts are handled by Chart.js for interactive, real-time data display (Goal: Inform, Justification: clear representation of system metrics and behavior, Method: Canvas/Chart.js). A dynamic log shows text-based telemetry (Goal: Organize, Justification: provides granular, step-by-step insight into the system's logic and decision-making, Method: HTML/JS). User interaction is handled via a slider for gaze distance (Goal: Engage, Interaction: sliders update variables which trigger chart and diagram changes, Justification: allows for a direct, intuitive exploration of the system's adaptive nature, Method: Vanilla JS). Gemini API is integrated to provide a research assistant and a dynamic audio overview, showcasing the potential for LLMs to enhance research tools. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+  .chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="bg-gray-50 text-gray-800 min-h-screen p-4 sm:p-8 md:p-12 antialiased leading-relaxed">
+  <div class="max-w-6xl mx-auto rounded-xl shadow-lg bg-white p-6 md:p-10 border border-gray-200">
+
+    <header class="text-center mb-10">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-2">AI-Driven Adaptive Optics</h1>
+      <p class="text-lg sm:text-xl md:text-2xl text-gray-600">A conceptual R&D prototype for amblyopia therapy</p>
+    </header>
+
+    <section class="mb-10 text-center">
+      <p class="text-base sm:text-lg mb-4 max-w-3xl mx-auto">
+        This interactive demo visualizes the core concepts of the proposed research platform. It showcases how a safety-first system can use a combination of sensors and AI to dynamically adjust a lens system in real-time, providing a novel therapeutic approach for amblyopia.
+      </p>
+      <div class="inline-flex space-x-2 md:space-x-4">
+        <span class="text-sm px-4 py-2 bg-gray-200 rounded-full font-medium text-gray-700">R&D Prototype</span>
+        <span class="text-sm px-4 py-2 bg-gray-200 rounded-full font-medium text-gray-700">AI-Assisted</span>
+        <span class="text-sm px-4 py-2 bg-gray-200 rounded-full font-medium text-gray-700">Safety-First</span>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+      
+      <!-- System Visualization Section -->
+      <div class="bg-gray-100 p-6 rounded-xl shadow-inner border border-gray-200 flex flex-col items-center justify-center">
+        <h2 class="text-2xl font-semibold text-center mb-6">System Visualization</h2>
+        <div class="flex flex-col items-center space-y-8 w-full max-w-sm">
+          
+          <!-- Simulated Environment & Sensors -->
+          <div class="w-full text-center">
+            <span class="text-4xl text-blue-500 mb-2">👁️</span>
+            <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Patient's Eye & Brain</p>
+          </div>
+          <div class="flex justify-around items-center w-full">
+            <div class="flex flex-col items-center">
+              <span class="text-3xl text-green-500 mb-1">💡</span>
+              <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Ambient Light</p>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="text-3xl text-red-500 mb-1">↔️</span>
+              <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">ToF Distance</p>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="text-3xl text-purple-500 mb-1">📐</span>
+              <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">IMU (Gaze)</p>
+            </div>
+          </div>
+          
+          <!-- System Core -->
+          <div class="w-full flex justify-between items-center relative">
+            <div class="w-1/3 text-center">
+              <span class="text-4xl text-gray-700 mb-2">🧠</span>
+              <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">ML Assist</p>
+            </div>
+            <div class="w-1/3 text-center">
+              <span class="text-4xl text-gray-700 mb-2">⚖️</span>
+              <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Control Stack</p>
+            </div>
+            <div class="w-1/3 text-center">
+              <span class="text-4xl text-yellow-500 mb-2">🔬</span>
+              <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Telemetry</p>
+            </div>
+            <div class="absolute w-2/3 h-1 bg-gray-300 rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-10"></div>
+          </div>
+          
+          <!-- Lens System -->
+          <div class="w-full text-center">
+            <div class="text-5xl mb-4">
+              <span id="lens-emoji" class="text-blue-500">🔵</span>
+              <span id="occlusion-emoji" class="text-gray-400">⚪</span>
+            </div>
+            <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Tunable Lens + LC Occlusion</p>
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- Control Panel & Metrics -->
+      <div class="bg-gray-100 p-6 rounded-xl shadow-inner border border-gray-200">
+        <h2 class="text-2xl font-semibold mb-6">Control & Metrics</h2>
+        
+        <div class="mb-6">
+          <label for="gaze-slider" class="block text-sm font-medium text-gray-700 mb-2">Simulated Gaze Distance</label>
+          <input type="range" id="gaze-slider" min="0" max="10" value="5" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+          <div class="flex justify-between text-xs text-gray-500 font-medium mt-1">
+            <span>Near (0m)</span>
+            <span id="gaze-value" class="font-bold text-gray-700">5 m</span>
+            <span>Far (10m)</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-center mb-8">
+          <div class="bg-white p-4 rounded-lg shadow border border-gray-200">
+            <p class="text-xs text-gray-500 font-medium uppercase">Lens Power (D)</p>
+            <p id="lens-power-display" class="text-3xl font-bold text-blue-600 mt-2">0.0</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow border border-gray-200">
+            <p class="text-xs text-gray-500 font-medium uppercase">Occlusion (%)</p>
+            <p id="occlusion-display" class="text-3xl font-bold text-gray-600 mt-2">0</p>
+          </div>
+        </div>
+        
+        <div class="chart-container mb-8">
+          <canvas id="metricsChart"></canvas>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 max-h-48 overflow-y-auto mb-4">
+          <p class="text-sm font-medium text-gray-700 mb-2">System Log</p>
+          <div id="log-panel" class="text-xs text-gray-600 font-mono"></div>
+        </div>
+
+        <!-- LLM and TTS features -->
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <p class="text-sm font-medium text-gray-700 mb-2">AI-Powered Tools</p>
+          <div class="flex flex-col space-y-2">
+            <button id="audio-overview-btn" class="w-full bg-blue-500 text-white rounded-lg p-2 font-medium hover:bg-blue-600 transition-colors">✨ Generate Audio Overview</button>
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+              <input type="text" id="research-query-input" class="flex-1 p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ask a research question...">
+              <button id="research-assist-btn" class="bg-green-500 text-white rounded-lg p-2 font-medium hover:bg-green-600 transition-colors shrink-0">✨ Research Assist</button>
+            </div>
+            <div id="research-response" class="mt-2 text-sm text-gray-600"></div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+  // Core System Variables
+  const gazeSlider = document.getElementById('gaze-slider');
+  const gazeValueDisplay = document.getElementById('gaze-value');
+  const lensPowerDisplay = document.getElementById('lens-power-display');
+  const occlusionDisplay = document.getElementById('occlusion-display');
+  const logPanel = document.getElementById('log-panel');
+  const lensEmoji = document.getElementById('lens-emoji');
+  const occlusionEmoji = document.getElementById('occlusion-emoji');
+  const audioOverviewBtn = document.getElementById('audio-overview-btn');
+  const researchQueryInput = document.getElementById('research-query-input');
+  const researchAssistBtn = document.getElementById('research-assist-btn');
+  const researchResponse = document.getElementById('research-response');
+
+  let logMessages = [];
+  const voiceName = "Kore";
+  const apiKey = "";
+  let audio = new Audio();
+
+  // Utility to convert base64 PCM to WAV
+  function base64ToArrayBuffer(base64) {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  function pcmToWav(pcmData, sampleRate) {
+    const pcm16 = new Int16Array(pcmData);
+    const dataLength = pcm16.length * 2;
+    const buffer = new ArrayBuffer(44 + dataLength);
+    const view = new DataView(buffer);
+
+    function writeString(view, offset, string) {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+      }
+    }
+
+    let offset = 0;
+    writeString(view, offset, 'RIFF'); offset += 4;
+    view.setUint32(offset, 36 + dataLength, true); offset += 4;
+    writeString(view, offset, 'WAVE'); offset += 4;
+    writeString(view, offset, 'fmt '); offset += 4;
+    view.setUint32(offset, 16, true); offset += 4;
+    view.setUint16(offset, 1, true); offset += 2;
+    view.setUint16(offset, 1, true); offset += 2;
+    view.setUint32(offset, sampleRate, true); offset += 4;
+    view.setUint32(offset, sampleRate * 2, true); offset += 4;
+    view.setUint16(offset, 2, true); offset += 2;
+    view.setUint16(offset, 16, true); offset += 2;
+    writeString(view, offset, 'data'); offset += 4;
+    view.setUint32(offset, dataLength, true); offset += 4;
+
+    for (let i = 0; i < pcm16.length; i++) {
+      view.setInt16(offset, pcm16[i], true);
+      offset += 2;
+    }
+
+    return new Blob([view], { type: 'audio/wav' });
+  }
+
+  // LLM and TTS functionality
+  async function generateAudioOverview() {
+    audioOverviewBtn.disabled = true;
+    audioOverviewBtn.innerText = "Generating...";
+    const overviewText = `The AI-driven adaptive optics system is a research prototype for amblyopia therapy. It uses real-time sensor data from distance, ambient light, and gaze to dynamically adjust the lens power and occlusion. The system is designed with a safety-first approach, using a guardrailed machine learning assist to suggest mild adjustments within predefined safety limits. Telemetry is logged for all system outputs and parameters.`;
+
+    const payload = {
+      contents: [{
+        parts: [{ text: overviewText }]
+      }],
+      generationConfig: {
+        responseModalities: ["AUDIO"],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName: voiceName }
+          }
+        }
+      },
+      model: "gemini-2.5-flash-preview-tts"
+    };
+
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      const part = result?.candidates?.[0]?.content?.parts?.[0];
+      const audioData = part?.inlineData?.data;
+      const mimeType = part?.inlineData?.mimeType;
+
+      if (audioData && mimeType && mimeType.startsWith("audio/")) {
+        const sampleRate = parseInt(mimeType.match(/rate=(\d+)/)[1], 10);
+        const pcmBuffer = base64ToArrayBuffer(audioData);
+        const wavBlob = pcmToWav(pcmBuffer, sampleRate);
+        const audioUrl = URL.createObjectURL(wavBlob);
+        audio.src = audioUrl;
+        audio.play();
+        updateLog("Audio overview generated and playing.");
+      } else {
+        updateLog("Error: Could not generate audio.");
+      }
+    } catch (e) {
+      updateLog(`Error generating audio: ${e.message}`);
+    } finally {
+      audioOverviewBtn.disabled = false;
+      audioOverviewBtn.innerText = "✨ Generate Audio Overview";
+    }
+  }
+
+  async function researchAssist() {
+    const userQuery = researchQueryInput.value.trim();
+    if (!userQuery) return;
+    researchResponse.innerText = "Thinking...";
+    researchAssistBtn.disabled = true;
+
+    const systemPrompt = `Act as a research assistant for a project on AI-driven adaptive optics for amblyopia therapy. The system is an R&D prototype that uses a guardrailed ML assist to dynamically adjust lenses based on sensor data. Provide a concise, single-paragraph summary of the methodology for the user's query.`;
+    const payload = {
+      contents: [{ parts: [{ text: userQuery }] }],
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      model: "gemini-2.5-flash-preview-05-20"
+    };
+
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text) {
+        researchResponse.innerText = text;
+      } else {
+        researchResponse.innerText = "Error: Could not get a response from the AI.";
+      }
+    } catch (e) {
+      researchResponse.innerText = `Error: ${e.message}`;
+    } finally {
+      researchAssistBtn.disabled = false;
+    }
+  }
+
+  // Chart.js Setup
+  const ctx = document.getElementById('metricsChart').getContext('2d');
+  const chartData = {
+    labels: [],
+    datasets: [{
+      label: 'Lens Power (D)',
+      data: [],
+      borderColor: 'rgb(59, 130, 246)',
+      backgroundColor: 'rgba(59, 130, 246, 0.2)',
+      tension: 0.1,
+      yAxisID: 'y',
+    }, {
+      label: 'Occlusion (%)',
+      data: [],
+      borderColor: 'rgb(107, 114, 128)',
+      backgroundColor: 'rgba(107, 114, 128, 0.2)',
+      tension: 0.1,
+      yAxisID: 'y',
+    }]
+  };
+  const metricsChart = new Chart(ctx, {
+    type: 'line',
+    data: chartData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Time (s)'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Value'
+          },
+          beginAtZero: true,
+          grid: {
+            drawOnChartArea: false,
+          }
+        }
+      }
+    }
+  });
+
+  // Log and Chart Update Functions
+  function updateLog(message) {
+    const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false });
+    const logEntry = `<span class="text-gray-400">[${timestamp}]</span> ${message}`;
+    logMessages.push(logEntry);
+    if (logMessages.length > 10) {
+      logMessages.shift();
+    }
+    logPanel.innerHTML = logMessages.join('<br>');
+    logPanel.scrollTop = logPanel.scrollHeight;
+  }
+
+  function addChartData(power, occlusion) {
+    const timestamp = metricsChart.data.labels.length;
+    metricsChart.data.labels.push(timestamp);
+    metricsChart.data.datasets[0].data.push(power);
+    metricsChart.data.datasets[1].data.push(occlusion);
+    metricsChart.update();
+  }
+
+  // Core System Logic (Simulated)
+  function runSystemUpdate() {
+    const gazeDistance = parseFloat(gazeSlider.value);
+    const ambientLight = Math.random() * 100; // Simulated ambient light
+    const isStationary = Math.random() < 0.8; // Simulated IMU stability
+
+    updateLog(`Sensors read: Dist=${gazeDistance.toFixed(1)}m, Light=${ambientLight.toFixed(0)}%, Stable=${isStationary}`);
+
+    let lensPower = 0.0;
+    let occlusion = 0;
+
+    // Rule-Based Logic
+    if (gazeDistance < 3 && isStationary) {
+      lensPower = 1.0;
+      updateLog("Rule-based logic: Applying near-focus lens power.");
+    } else if (gazeDistance > 7) {
+      lensPower = 0.0;
+      updateLog("Rule-based logic: Resetting lens power for far-gaze.");
+    }
+
+    // Guardrailed ML Assist Logic (Simulated)
+    // Only suggests changes for specific conditions, always respects hard limits
+    const currentPower = parseFloat(lensPowerDisplay.innerText);
+    if (gazeDistance > 3 && gazeDistance < 7 && isStationary) {
+      const mlSuggestion = Math.random() * 0.2 - 0.1; // Suggests a small +/- adjustment
+      lensPower = Math.min(Math.max(currentPower + mlSuggestion, -0.5), 1.5); // Hard clamps
+      updateLog(`ML Assist suggests a gentle adjustment of ${mlSuggestion.toFixed(2)}D. New power: ${lensPower.toFixed(1)}D.`);
+    }
+
+    // Safety Guardrails
+    const slewRateLimit = 0.2; // Max Diopter change per second
+    const occlusionDutyCap = 50; // Max duty cycle
+    const currentOcclusion = parseInt(occlusionDisplay.innerText);
+    const newOcclusion = Math.min(Math.floor((10 - gazeDistance) * 5), occlusionDutyCap);
+
+    if (Math.abs(lensPower - currentPower) > slewRateLimit) {
+      const newPower = currentPower + (Math.sign(lensPower - currentPower) * slewRateLimit);
+      updateLog(`Warning: Slew rate limit detected. Capping lens change to ${slewRateLimit.toFixed(1)}D.`);
+      lensPower = newPower;
+    }
+    
+    occlusion = newOcclusion;
+
+    lensPowerDisplay.innerText = lensPower.toFixed(1);
+    occlusionDisplay.innerText = occlusion;
+
+    // Visual feedback
+    if (occlusion > 0) {
+      occlusionEmoji.style.color = `rgba(107, 114, 128, ${occlusion / 100})`;
+      occlusionEmoji.style.opacity = '1';
+    } else {
+      occlusionEmoji.style.opacity = '0.2';
+    }
+
+    addChartData(lensPower, occlusion);
+  }
+
+  // Event Listeners for new features
+  audioOverviewBtn.addEventListener('click', generateAudioOverview);
+  researchAssistBtn.addEventListener('click', researchAssist);
+
+  // Event Listener for Slider
+  gazeSlider.addEventListener('input', () => {
+    gazeValueDisplay.innerText = `${gazeSlider.value} m`;
+    runSystemUpdate();
+  });
+
+  // Initial Run and Interval
+  function init() {
+    updateLog("System initialized. Awaiting user input.");
+    gazeSlider.dispatchEvent(new Event('input')); // Initial run
+    setInterval(runSystemUpdate, 2000); // Continuous update every 2 seconds
+  }
+
+  window.onload = init;
+</script>
