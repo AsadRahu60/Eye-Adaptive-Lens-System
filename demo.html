@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI‑Driven Adaptive Optics – R&D Demo (Offline)</title>
+    <meta name="description" content="Interactive research demo for an AI‑assisted adaptive optics platform (amblyopia R&D). Offline, no external network calls." />
+    <style>
+      :root { --bg:#f8fafc; --fg:#0f172a; --muted:#475569; --card:#ffffff; --border:#e2e8f0; --accent:#2563eb; --ok:#10b981; --warn:#f59e0b; --bad:#ef4444; }
+      html,body{height:100%}
+      body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans","Liberation Sans",sans-serif}
+      .container{max-width:1100px;margin:0 auto;padding:16px}
+      .card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 24px rgba(15,23,42,.06);padding:24px}
+      h1{margin:.2em 0;font-size:clamp(28px,4vw,44px)} h2{margin:0 0 8px;font-size:22px}
+      .sub{color:var(--muted);font-size:clamp(16px,2.2vw,20px)}
+      .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0 0}
+      .chip{background:#e5e7eb;color:#374151;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:600}
+      .grid{display:grid;gap:20px}
+      @media(min-width:980px){.grid{grid-template-columns:1fr 1fr}}
+      .panel{background:#f1f5f9;border:1px solid var(--border);border-radius:14px;padding:16px}
+      .center{text-align:center}
+      .subtitle{font-size:14px;color:#64748b;text-transform:uppercase;letter-spacing:.08em}
+      .row{display:flex;gap:18px;justify-content:space-between}
+      .badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
+      .ok{background:#d1fae5;color:#065f46} .cap{background:#fef9c3;color:#854d0e} .idle{background:#d1fae5;color:#065f46} .neutral{background:#ffedd5;color:#7c2d12}
+      .metric{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
+      .metric .k{font-weight:800;font-size:28px}
+      .stack{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+      .links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0 24px}
+      .link{border:1px solid var(--border);background:#f8fafc;color:#0f172a;border-radius:999px;padding:8px 12px;font-weight:600;text-decoration:none}
+      .log{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:10px;max-height:180px;overflow:auto;font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;color:#334155}
+      .bar{background:#fffbeb;border-bottom:1px solid #fde68a;color:#854d0e;padding:10px 0;text-align:center;font-size:14px}
+      .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+      .footer{font-size:12px;color:#64748b;text-align:center;margin-top:10px}
+      .range{width:100%}
+      .stack-col{display:flex;gap:12px;align-items:center;justify-content:space-around}
+      canvas{display:block;width:100%;height:320px;border:1px solid var(--border);border-radius:12px;background:#fff}
+    </style>
+</head>
+<body>
+    <div class="bar"><strong>R&D demo only</strong> — not a medical device; no clinical use. Synthetic telemetry; no personal data collected.</div>
+    <main class="container">
+        <div class="card">
+            <header class="center">
+                <h1>AI‑Driven Adaptive Optics</h1>
+                <div class="sub">Conceptual R&D prototype for amblyopia therapy</div>
+                <div class="links" aria-label="Quick links">
+                    <a class="link" href="#">2‑Page Proposal (PDF)</a>
+                    <a class="link" href="#">Full Proposal</a>
+                    <a class="link" href="#">CV</a>
+                    <a class="link" href="https://github.com/AsadRahu60/eye-adaptive-lens" target="_blank" rel="noopener">GitHub Repo</a>
+                </div>
+                <div class="chips" role="list">
+                    <span class="chip" role="listitem">R&D Prototype</span>
+                    <span class="chip" role="listitem">AI‑Assisted</span>
+                    <span class="chip" role="listitem">Safety‑First</span>
+                    <span class="chip" role="listitem">Reproducible</span>
+                </div>
+            </header>
+            <p class="center" style="max-width:760px;margin:14px auto 28px;">
+                This interactive demo visualizes the core concepts of the research platform. It shows how a safety‑first system can use sensor context and conservative, guardrailed policies to modulate a lens system in real‑time for amblyopia research.
+            </p>
+            <section class="grid">
+                <div class="panel center">
+                    <h2>System Visualization</h2>
+                    <div class="subtitle" aria-hidden="true">Diagram</div>
+                    <div class="stack-col" aria-label="Diagram of eye, sensors, control, and optics">
+                        <div>
+                            <div style="font-size:40px">👁️</div>
+                            <div class="subtitle">Eye & Brain</div>
+                        </div>
+                        <div>
+                            <div style="font-size:28px">💡</div>
+                            <div class="subtitle">Ambient</div>
+                        </div>
+                        <div>
+                            <div style="font-size:28px">↔️</div>
+                            <div class="subtitle">ToF</div>
+                        </div>
+                        <div>
+                            <div style="font-size:28px">📐</div>
+                            <div class="subtitle">IMU</div>
+                        </div>
+                    </div>
+                    <div style="margin-top:14px">
+                        <div style="font-size:44px"><span id="lens-emoji">🔵</span> <span id="occlusion-emoji" style="opacity:.3">⚪</span></div>
+                        <div class="subtitle">Tunable Lens + LC Occlusion</div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h2>Control & Metrics</h2>
+                    <div class="row" style="margin:6px 0 12px">
+                        <span id="status-slew" class="badge ok">Slew: OK</span>
+                        <span id="status-duty" class="badge ok">Duty: OK</span>
+                        <span id="status-watchdog" class="badge idle">Watchdog: Idle</span>
+                    </div>
+                    <label for="gaze" class="subtitle" style="letter-spacing:normal;text-transform:none">Simulated Gaze Distance (0–10 m)</label>
+                    <input type="range" id="gaze" class="range" min="0" max="10" step="0.1" value="5" aria-label="Simulated gaze distance">
+                    <div class="row" style="font-size:12px;color:#64748b;margin-top:4px"><span>Near (0 m)</span><span id="gaze-val" style="font-weight:700;color:#0f172a">5.0 m</span><span>Far (10 m)</span></div>
+                    <div class="row" style="margin:12px 0">
+                        <div class="metric" style="flex:1">
+                            <div class="subtitle">Lens Power (D)</div>
+                            <div id="lens-k" class="k" aria-live="polite">0.0</div>
+                        </div>
+                        <div class="metric" style="flex:1">
+                            <div class="subtitle">Occlusion (%)</div>
+                            <div id="occ-k" class="k" aria-live="polite">0</div>
+                        </div>
+                    </div>
+                    <canvas id="chart" width="640" height="320" aria-label="Live metrics chart" role="img"></canvas>
+                    <div class="log" id="log" aria-live="polite" style="margin-top:10px"></div>
+                </div>
+            </section>
+            <div class="footer">© <span id="year"></span> Adaptive Optics R&D • Reproducible: CI‑tested demo & docs • Contact: asadullahrahoo98@gmail.com</div>
+        </div>
+    </main>
+    <script>
+      // Elements
+      const gaze = document.getElementById('gaze');
+      const gazeVal = document.getElementById('gaze-val');
+      const lensK = document.getElementById('lens-k');
+      const occK = document.getElementById('occ-k');
+      const statusSlew = document.getElementById('status-slew');
+      const statusDuty = document.getElementById('status-duty');
+      const statusWatchdog = document.getElementById('status-watchdog');
+      const logEl = document.getElementById('log');
+      const lensEmoji = document.getElementById('lens-emoji');
+      const occEmoji = document.getElementById('occlusion-emoji');
+      const yearEl = document.getElementById('year');
+      const chart = document.getElementById('chart');
+      const ctx = chart.getContext('2d');
+      yearEl.textContent = new Date().getFullYear();
+      // Simple rolling data & custom chart (no libraries)
+      const MAX_POINTS = 120; // ~4 min at 2s interval
+      const points = []; // {t, lens, occ}
+      function drawChart(){
+        const w = chart.width, h = chart.height;
+        ctx.clearRect(0,0,w,h);
+        // axes
+        ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(40,10); ctx.lineTo(40,h-30); ctx.lineTo(w-10,h-30); ctx.stroke();
+        ctx.fillStyle = '#64748b'; ctx.font = '12px system-ui'; ctx.fillText('Value', 6, 18); ctx.fillText('Time', w-50, h-10);
+        if(points.length<2) return;
+        const x0=40, y0=h-30, xW=w-50, yH=h-50;
+        const tMin = points[0].t; const tMax = points[points.length-1].t || 1;
+        const dMin = -0.5, dMax = 1.5; // lens power range
+        const oMin = 0, oMax = 50;     // occlusion range
+        function x(t){ return x0 + ( (t - tMin) / Math.max(1,(tMax - tMin)) ) * xW; }
+        function yD(v){ return y0 - ((v - dMin)/(dMax - dMin))*yH; }
+        function yO(v){ return y0 - ((v - oMin)/(oMax - oMin))*yH; }
+        // grid lines
+        ctx.strokeStyle='#f1f5f9';
+        for(let i=0;i<=5;i++){ const yy=y0 - (i/5)*yH; ctx.beginPath(); ctx.moveTo(40,yy); ctx.lineTo(w-10,yy); ctx.stroke(); }
+        // lens power polyline
+        ctx.strokeStyle = '#2563eb'; ctx.lineWidth=2; ctx.beginPath();
+        points.forEach((p,i)=>{ const X=x(p.t), Y=yD(p.lens); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); });
+        ctx.stroke(); ctx.fillStyle='#2563eb'; ctx.fillText('Lens (D)', w-110, 18);
+        // occlusion polyline
+        ctx.strokeStyle = '#6b7280'; ctx.lineWidth=2; ctx.beginPath();
+        points.forEach((p,i)=>{ const X=x(p.t), Y=yO(p.occ); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); });
+        ctx.stroke(); ctx.fillStyle='#6b7280'; ctx.fillText('Occlusion (%)', w-210, 34);
+      }
+      // Logging
+      const MAX_LOG = 14;
+      function log(tag,msg){
+        const t = new Date().toLocaleTimeString('en-GB',{hour12:false});
+        logEl.insertAdjacentHTML('beforeend', `<div><span style="color:#94a3b8">[${t}]</span> <strong>${tag}</strong> ${msg}</div>`);
+        while(logEl.childNodes.length>MAX_LOG){ logEl.removeChild(logEl.firstChild); }
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      // Core model
+      const SLEW = 0.2; const DUTY_CAP = 50;
+      let lastLens = 0.0; let t=0;
+      function clamp(v,min,max){ return Math.max(min, Math.min(max,v)); }
+      function mapDistanceToDiopters(d){ d = clamp(d,0.3,10); return clamp((1/d) - 0.5, -0.5, 1.5); }
+      function step(){
+        const d = parseFloat(gaze.value);
+        gazeVal.textContent = d.toFixed(1)+" m";
+        const ambient = Math.round(Math.random()*100);
+        const stable = Math.random()<0.8;
+        log('SENSOR',`dist=${d.toFixed(1)}m light=${ambient}% stable=${stable}`);
+        let target = 0.0;
+        if(d<3 && stable){ target = 1.0; log('POLICY','near-focus assist +1.0 D'); }
+        else if(d>7){ target = 0.0; log('POLICY','far-gaze relax 0.0 D'); }
+        else { target = mapDistanceToDiopters(d); log('POLICY',`map ${d.toFixed(1)}m → ${target.toFixed(2)} D`); }
+        if(stable && d>=3 && d<=7){ const n = (Math.random()*0.2)-0.1; target = clamp(target+n,-0.5,1.5); log('ML',`suggest Δ${n.toFixed(2)} D → ${target.toFixed(2)} D`); }
+        const delta = target - lastLens; let next = target; let clamped=false;
+        if(Math.abs(delta)>SLEW){ next = lastLens + Math.sign(delta)*SLEW; clamped=true; log('SAFETY',`slew cap | Δ${delta.toFixed(2)}→${(Math.sign(delta)*SLEW).toFixed(2)} D`); }
+        let occ = Math.min(Math.floor((10-d)*5), DUTY_CAP); if(occ<0) occ=0;
+        statusSlew.textContent = clamped? 'Slew: Clamped':'Slew: OK';
+        statusSlew.className = 'badge ' + (clamped? 'cap':'ok');
+        statusDuty.textContent = occ>=DUTY_CAP? 'Duty: Capped':'Duty: OK';
+        statusDuty.className = 'badge ' + (occ>=DUTY_CAP? 'cap':'ok');
+        if(!stable && Math.abs(delta)>0.5){ next=0.0; occ=0; statusWatchdog.textContent='Watchdog: Neutral'; statusWatchdog.className='badge neutral'; log('SAFETY','watchdog → neutral focus & transparent shutters'); }
+        else { statusWatchdog.textContent='Watchdog: Idle'; statusWatchdog.className='badge idle'; }
+        lastLens = next; lensK.textContent = next.toFixed(1); occK.textContent = occ;
+        occEmoji.style.opacity = occ>0? '1':'0.3';
+        points.push({t, lens:next, occ}); if(points.length>MAX_POINTS) points.shift(); t+=2; drawChart();
+        log('OUTPUT',`lens=${next.toFixed(1)}D occ=${occ}%`);
+      }
+      gaze.addEventListener('input', step);
+      function init(){ log('INFO','System initialized. Demo mode active.'); step(); setInterval(step,2000); }
+      window.addEventListener('load', init);
+    </script>
+</body>
+</html>
