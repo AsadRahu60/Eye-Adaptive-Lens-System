@@ -75,6 +75,41 @@ flowchart LR
 
 ---
 
+## Vision Therapy Simulator (Computer Vision)
+
+To enable rapid experimentation when physical tunable lens hardware is unavailable,
+this project includes a **computer-vision-based simulation module** located at:
+
+➡️ `vision_therapy_cv/`
+
+This module simulates key therapy concepts such as **per-eye occlusion, blur, and
+contrast modulation** using a live camera or video input. It follows the same
+system-level principles as the hardware path: **safety bounds, staged control,
+telemetry, and reproducible logging**.
+
+### Why this module exists
+- Hardware lenses are expensive and not always available during early research
+- Software simulation allows faster iteration and validation
+- Enables test automation, data analysis, and ML experimentation
+- Keeps the project moving while preserving architectural intent
+
+### What it supports (current stage)
+- JSON-based therapy profiles (occlusion cycles, blur, contrast)
+- Left / right / binocular visual simulation
+- Conservative safety limits on all effects
+- Session-level CSV logging for validation and analysis
+
+This module is **not a replacement** for the optical system.  
+It is a **research and validation tool** that complements the ESP32-based hardware
+pipeline and supports the long-term roadmap toward adaptive, closed-loop therapy.
+
+➡️ See detailed usage and implementation:
+[vision_therapy_cv/README.md](vision_therapy_cv/README.md)
+
+---
+
+---
+
 ## Quality & Testing
 Standards‑inspired (ISO 14971 risk thinking, IEC 62304/62366 mindset) — **not certified**.
 - **Levels:** unit (Python), integration (sensors/driver links), system (bench), usability (operator workflows)

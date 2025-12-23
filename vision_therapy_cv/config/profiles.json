@@ -1,0 +1,62 @@
+{
+  "intermittent_occlusion_left": {
+    "description": "Occlude LEFT eye periodically (simulation).",
+    "duration_sec": 300,
+    "cycle_sec": 10,
+    "on_sec": 5,
+    "target_eye": "left",
+    "effects": {
+      "occlusion_strength": 1.0,
+      "blur_sigma": 0.0,
+      "contrast_alpha": 1.0,
+      "brightness_beta": 0
+    },
+    "safety": {
+      "max_occlusion_strength": 1.0,
+      "max_blur_sigma": 6.0,
+      "max_contrast_alpha": 2.0,
+      "min_contrast_alpha": 0.5,
+      "max_abs_brightness_beta": 80
+    }
+  },
+  "contrast_balance_both": {
+    "description": "Mild contrast/brightness change on both eyes (whole frame).",
+    "duration_sec": 300,
+    "cycle_sec": 0,
+    "on_sec": 0,
+    "target_eye": "both",
+    "effects": {
+      "occlusion_strength": 0.0,
+      "blur_sigma": 0.0,
+      "contrast_alpha": 1.25,
+      "brightness_beta": 10
+    },
+    "safety": {
+      "max_occlusion_strength": 1.0,
+      "max_blur_sigma": 6.0,
+      "max_contrast_alpha": 2.0,
+      "min_contrast_alpha": 0.5,
+      "max_abs_brightness_beta": 80
+    }
+  },
+  "blur_right_soft": {
+    "description": "Apply soft blur to RIGHT eye continuously (simulation).",
+    "duration_sec": 300,
+    "cycle_sec": 0,
+    "on_sec": 0,
+    "target_eye": "right",
+    "effects": {
+      "occlusion_strength": 0.0,
+      "blur_sigma": 2.5,
+      "contrast_alpha": 1.0,
+      "brightness_beta": 0
+    },
+    "safety": {
+      "max_occlusion_strength": 1.0,
+      "max_blur_sigma": 6.0,
+      "max_contrast_alpha": 2.0,
+      "min_contrast_alpha": 0.5,
+      "max_abs_brightness_beta": 80
+    }
+  }
+}
