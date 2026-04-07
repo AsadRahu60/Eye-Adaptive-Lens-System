@@ -13,17 +13,19 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import logging
 import random
 import time
-
-# from datetime import datetime
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 try:
     # Optional; only used when --ble is passed
     from bleak import BleakClient  # type: ignore
-except Exception:  # pragma: no cover
+except ImportError:  # pragma: no cover
     BleakClient = None  # noqa: N816
+    log.debug("bleak not installed; BLE mode unavailable")
 
 
 def mock_packet() -> dict:
@@ -41,26 +43,33 @@ def to_csv_row(pkt: dict) -> list:
 
 
 def run_mock(duration: float, interval: float, out: Path | None) -> None:
-    print("[demo] starting mock telemetry stream…")
-    writer = None
+    """Run mock telemetry stream; writes CSV if *out* is provided."""
+    log.info("Starting mock telemetry stream (duration=%.1fs, interval=%.2fs)", duration, interval)
+    start = time.time()
     if out:
         out.parent.mkdir(parents=True, exist_ok=True)
-        f = out.open("w", newline="")
-        writer = csv.writer(f)
-        writer.writerow(["ts", "dist_cm", "lux", "yaw_deg"])
-    start = time.time()
-    while time.time() - start < duration:
-        pkt = mock_packet()
-        print(json.dumps(pkt))
-        if writer:
-            writer.writerow(to_csv_row(pkt))
-        time.sleep(interval)
-    if out:
-        f.close()
-        print(f"[demo] wrote CSV → {out}")
+        # Use context manager to guarantee file is closed even on exception
+        with out.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["ts", "dist_cm", "lux", "yaw_deg"])
+            while time.time() - start < duration:
+                pkt = mock_packet()
+                log.debug("packet: %s", json.dumps(pkt))
+                writer.writerow(to_csv_row(pkt))
+                time.sleep(interval)
+        log.info("Wrote CSV → %s", out)
+    else:
+        while time.time() - start < duration:
+            pkt = mock_packet()
+            log.debug("packet: %s", json.dumps(pkt))
+            time.sleep(interval)
 
 
 def main() -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )
     p = argparse.ArgumentParser()
     p.add_argument(
         "--mock",
@@ -85,7 +94,13 @@ def main() -> None:
         default="data/sessions/demo.csv",
         help="optional CSV output path",
     )
+    p.add_argument(
+        "--verbose", action="store_true", help="enable DEBUG logging"
+    )
     args = p.parse_args()
+
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
 
     out = Path(args.out) if args.out else None
 
@@ -93,7 +108,7 @@ def main() -> None:
         if BleakClient is None:
             raise SystemExit("bleak not installed; run: pip install bleak")
         # Placeholder: keep mock for CI; wire up BLE later
-        print("[warn] --ble not implemented; falling back to --mock")
+        log.warning("--ble not implemented; falling back to --mock")
     run_mock(args.duration, args.interval, out)
 
 

@@ -207,11 +207,4 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md). Use **Conventional Commits** and PR te
 
 ## License
 MIT — see [`LICENSE`](LICENSE).
-
 ---
-
-### GitHub Polish Checklist
-- Repo topics: `amblyopia`, `tunable-lens`, `embedded`, `esp32`, `python`, `vision-science`, `qa-testing`
-- Social preview: upload `assets/social-preview.png` (1200×630)
-- Pin this repo; add it to CV/LinkedIn
-- CI badge already points to `https://github.com/AsadRahu60/eye-adaptive-lens/actions`

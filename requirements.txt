@@ -1,6 +1,13 @@
-pyserial
-numpy>=1.26
-pandas>=2.2
-scikit-learn>=1.4,<1.6
-joblib>=1.4
-scipy>=1.11
+# ── Core runtime dependencies ─────────────────────────────────────────────────
+# Pinned to minor versions for reproducibility.
+# Run `pip-compile requirements.in` (pip-tools) to regenerate with full hashes.
+
+pyserial==3.5
+numpy>=1.26,<2.1
+pandas>=2.2,<2.3
+scikit-learn>=1.5,<1.6
+joblib>=1.4,<1.5
+scipy>=1.13,<1.14
+
+# Configuration (optional; gracefully absent)
+python-dotenv>=1.0,<2.0

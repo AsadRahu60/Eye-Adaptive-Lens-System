@@ -1,18 +1,28 @@
 from __future__ import annotations
 
 import argparse
+import logging
 import sys
 import time
-from typing import Optional
+from typing import Callable, List, Optional
+
+log = logging.getLogger(__name__)
 
 try:
     import serial  # type: ignore
-except Exception:  # pragma: no cover
+except ImportError:  # pragma: no cover
     serial = None
+    log.debug("pyserial not installed; OptoLens will operate in dry-run mode")
 
 
 class OptoLens:
-    """Minimal controller for Optotune LD-4/ICC (placeholder protocol)."""
+    """Minimal controller for Optotune LD-4/ICC (placeholder protocol).
+
+    Automatically falls back to dry-run mode when:
+    - *port* is None, or
+    - pyserial is not installed, or
+    - the serial port cannot be opened.
+    """
 
     def __init__(
         self,
@@ -25,31 +35,37 @@ class OptoLens:
         self.ser = None
         if not self.dry_run:
             try:
-                # type: ignore[attr-defined]
-                self.ser = serial.Serial(port, baud, timeout=timeout)
-            except Exception:
+                self.ser = serial.Serial(port, baud, timeout=timeout)  # type: ignore[attr-defined]
+                log.info("Opened serial port %s at %d baud", port, baud)
+            except serial.SerialException as exc:  # type: ignore[attr-defined]
+                log.error("Failed to open serial port %s: %s — switching to dry-run", port, exc)
                 self.dry_run = True
 
     def send(self, cmd: str) -> str:
+        """Send a command string and return the response (or 'OK' in dry-run)."""
         if self.dry_run or self.ser is None:
-            print(f"[DRY-RUN] -> {cmd}")
+            log.debug("[DRY-RUN] -> %s", cmd)
             return "OK"
-        # type: ignore[union-attr]
-        self.ser.write((cmd + "\n").encode())
-        # type: ignore[union-attr]
-        return self.ser.readline().decode(errors="ignore").strip()
+        self.ser.write((cmd + "\n").encode())  # type: ignore[union-attr]
+        return self.ser.readline().decode(errors="ignore").strip()  # type: ignore[union-attr]
 
     def set_diopter(self, dpt: float) -> str:
-        # TODO: replace with exact LD-4/ICC command when you have the manual.
+        """Set lens power in diopters.
+
+        NOTE: Replace 'SET DIOP' with the exact LD-4/ICC command once the
+        hardware manual is available.
+        """
         return self.send(f"SET DIOP {dpt:.2f}")
 
     def close(self) -> None:
+        """Release the serial port if open."""
         if self.ser:
-            # type: ignore[union-attr]
-            self.ser.close()
+            self.ser.close()  # type: ignore[union-attr]
+            log.debug("Serial port %s closed", self.port)
 
 
 def ramp(current: float, target: float, max_rate_dpt_s: float, dt: float) -> float:
+    """Advance *current* toward *target* by at most *max_rate_dpt_s* × *dt*."""
     delta = target - current
     if abs(delta) <= max_rate_dpt_s * dt:
         return target
@@ -62,40 +78,47 @@ def ramp_focus(
     end_dpt: float,
     duration_s: float,
     steps: int = 20,
-    apply=None,
+    apply: Optional[Callable[[float], None]] = None,
     sleep: bool = False,
-):
-    """
-    Create a linear ramp of focus values from start_dpt to end_dpt.
+) -> List[float]:
+    """Create a linear ramp of focus values from *start_dpt* to *end_dpt*.
 
-    - steps: number of intervals (path will have steps+1 points)
-    - apply: optional callable applied to each setpoint (e.g., lens.set_diopter)
-    - sleep: if True, sleep duration_s/steps between points (avoid in tests)
-    Returns: list of setpoints (floats)
+    Args:
+        start_dpt: Starting diopter value.
+        end_dpt: Target diopter value.
+        duration_s: Total ramp duration in seconds.
+        steps: Number of intervals (path will have steps+1 points).
+        apply: Optional callable applied to each setpoint (e.g. lens.set_diopter).
+        sleep: If True, sleep between steps — avoid in unit tests.
+
+    Returns:
+        List of diopter setpoints.
     """
     if steps <= 0:
-        # Edge case: jump directly to target
         path = [end_dpt]
         if apply:
             apply(end_dpt)
         return path
 
     dt = duration_s / steps if duration_s > 0 else 0.0
-    path = []
+    path: List[float] = []
     for i in range(steps + 1):
         level = start_dpt + (end_dpt - start_dpt) * (i / steps)
         path.append(level)
         if apply:
             apply(level)
         else:
-            # Dry-run print to make behavior observable without hardware
-            print(f"[RAMP] {level:.2f} dpt")
+            log.debug("[RAMP] %.2f dpt", level)
         if sleep and dt > 0:
             time.sleep(dt)
     return path
 
 
 def main() -> int:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )
     p = argparse.ArgumentParser(description="Control lens (dry-run if no --port).")
     p.add_argument("--port", default=None, help="e.g., /dev/ttyUSB0 or COM3")
     p.add_argument("--start", type=float, default=0.00)
@@ -111,7 +134,7 @@ def main() -> int:
         while True:
             current = ramp(current, args.target, args.rate, dt)
             resp = lens.set_diopter(current)
-            print(f"set {current:.2f} dpt -> {resp}")
+            log.info("set %.2f dpt -> %s", current, resp)
             if current == args.target:
                 break
             time.sleep(dt)

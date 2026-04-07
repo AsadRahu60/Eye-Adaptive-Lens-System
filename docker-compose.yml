@@ -1,0 +1,78 @@
+version: "3.9"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Eye Adaptive Lens System — Docker Compose
+#
+# Usage:
+#   docker compose up telemetry          # mock sensor stream
+#   docker compose up lens               # lens controller (dry-run without --port)
+#   docker compose run --rm tests        # run pytest suite
+# ──────────────────────────────────────────────────────────────────────────────
+
+x-common: &common
+  build:
+    context: .
+    target: runtime
+  env_file:
+    - .env            # optional — copy from .env.example and fill in
+  restart: "no"
+  volumes:
+    - session_data:/app/data
+    - session_logs:/app/logs
+
+services:
+
+  # ── Telemetry demo (mock sensor stream) ──────────────────────────────────
+  telemetry:
+    <<: *common
+    container_name: eye_telemetry
+    command:
+      - python
+      - -m
+      - host.pi.telemetry_demo
+      - --mock
+      - --duration
+      - "60"
+      - --interval
+      - "0.5"
+      - --out
+      - /app/data/sessions/demo.csv
+
+  # ── Lens controller (dry-run unless LENS_PORT is set in .env) ────────────
+  lens:
+    <<: *common
+    container_name: eye_lens
+    command:
+      - python
+      - -m
+      - host.pi.lens_controller
+      - --start
+      - "0.0"
+      - --target
+      - "1.5"
+    # Pass the serial device through if available
+    devices:
+      - "${LENS_PORT:-/dev/null}:${LENS_PORT:-/dev/null}"
+
+  # ── pytest test runner ────────────────────────────────────────────────────
+  tests:
+    build:
+      context: .
+      target: runtime
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command:
+      - python
+      - -m
+      - pytest
+      - test/
+      - vision_therapy_cv/tests/
+      - -v
+      - --tb=short
+    restart: "no"
+
+volumes:
+  session_data:
+  session_logs:

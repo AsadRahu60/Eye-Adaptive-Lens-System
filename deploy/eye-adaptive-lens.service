@@ -1,0 +1,61 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Eye Adaptive Lens System — systemd unit file
+#
+# Installation (Raspberry Pi):
+#   sudo cp deploy/eye-adaptive-lens.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable eye-adaptive-lens
+#   sudo systemctl start eye-adaptive-lens
+#   sudo systemctl status eye-adaptive-lens
+#
+# View logs:
+#   journalctl -u eye-adaptive-lens -f
+# ──────────────────────────────────────────────────────────────────────────────
+
+[Unit]
+Description=Eye Adaptive Lens System Host Daemon
+Documentation=https://github.com/your-org/eye-adaptive-lens-system
+After=network.target
+
+[Service]
+# Run as a dedicated user (create with: sudo useradd -r -s /sbin/nologin eyeapp)
+User=eyeapp
+Group=dialout
+
+# Absolute path to the project root (adjust to your install location)
+WorkingDirectory=/opt/eye-adaptive-lens-system
+
+# Load .env if present
+EnvironmentFile=-/opt/eye-adaptive-lens-system/.env
+
+# Override specific environment variables here if needed
+Environment=LOG_LEVEL=INFO
+Environment=PYTHONUNBUFFERED=1
+
+# Main service command — change to lens_controller or vision therapy as needed
+ExecStart=/usr/bin/python3 -m host.pi.telemetry_demo \
+            --duration 86400 \
+            --interval 0.5 \
+            --out /var/lib/eye-lens/sessions/session.csv
+
+# Graceful stop (SIGTERM) → hard kill after 10s
+KillSignal=SIGTERM
+TimeoutStopSec=10
+
+# Restart on failure with a 5-second back-off
+Restart=on-failure
+RestartSec=5
+
+# Write stdout/stderr to the system journal
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=eye-adaptive-lens
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/eye-lens /tmp
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
