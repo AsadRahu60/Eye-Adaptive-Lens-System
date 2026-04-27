@@ -36,13 +36,43 @@
  *    SET PERIOD <ms>            — set LC oscillation period in ms
  *    STATUS                     — respond with current state JSON
  *
- * Hardware Pins (ESP32-S3 DevKit, adjust for your board)
- * ───────────────────────────────────────────────────────
- *   I2C SDA      → GPIO 8
- *   I2C SCL      → GPIO 9
- *   LC Left PWM  → GPIO 4   (LEDC channel 0)
- *   LC Right PWM → GPIO 5   (LEDC channel 1)
- *   Status LED   → GPIO 2   (built-in LED on most DevKit boards)
+ * LC Shutter — AC Drive Architecture
+ * ─────────────────────────────────────
+ * Liquid Crystal cells REQUIRE a true AC (zero-DC-offset) drive signal.
+ * A sustained DC voltage causes irreversible ion migration that permanently
+ * degrades the LC material (within hours to days).
+ *
+ * Solution: H-bridge driver (e.g. DRV8833, L298N, TB6612) + complementary PWM.
+ *
+ *   ESP32 IN_A ──────────────────┐
+ *                                ▼
+ *                          ┌──H-Bridge──┐
+ *                          │            │──► LC cell (true AC across terminals)
+ *                          └────────────┘
+ *   ESP32 IN_B (inverted) ─┘
+ *
+ * Waveform seen across the LC cell:
+ *   IN_A:  ▔▔▔╗___╔▔▔▔╗___    (PWM at duty D%, freq F Hz)
+ *   IN_B:  ___╔▔▔▔╗___╔▔▔    (inverted: duty (100-D)%, same freq)
+ *   V_LC:  +V | -V | +V |    ← zero-DC-offset AC square wave ✓
+ *
+ * The occlusion level is controlled by the duty cycle D:
+ *   D = 50%  → balanced AC, LC fully open  (transparent)
+ *   D = 80%  → asymmetric, LC partially closed
+ *   D = 100% → DC (avoid!) — firmware clamps to MAX_SHUTTER_DUTY_PCT
+ *
+ * Recommended LC drive frequency: 100–200 Hz (above flicker threshold).
+ * This firmware uses LEDC_FREQ_HZ = 120 Hz by default.
+ *
+ * Hardware Pins (ESP32-S3 DevKit — adjust for your board)
+ * ────────────────────────────────────────────────────────
+ *   I2C SDA          → GPIO 8
+ *   I2C SCL          → GPIO 9
+ *   LC Left  IN_A    → GPIO 4   (LEDC channel 0 — primary)
+ *   LC Left  IN_B    → GPIO 16  (LEDC channel 1 — inverted)
+ *   LC Right IN_A    → GPIO 5   (LEDC channel 2 — primary)
+ *   LC Right IN_B    → GPIO 17  (LEDC channel 3 — inverted)
+ *   Status LED       → GPIO 2   (built-in LED on most DevKit boards)
  *
  * Dependencies (install via Arduino Library Manager or platformio.ini)
  * ────────────────────────────────────────────────────────────────────
@@ -55,7 +85,7 @@
  * NOTE: If sensors are not wired, MOCK_SENSORS=1 enables simulated data.
  *
  * @file    main.cpp
- * @version 0.2.0-S1
+ * @version 0.3.0-S1
  * @stage   S1 Research & Development
  */
 
@@ -90,17 +120,27 @@
 #define DEVICE_NAME             "EyeLens-S3"
 
 // GPIO
-#define PIN_SDA           8
-#define PIN_SCL           9
-#define PIN_LC_LEFT       4
-#define PIN_LC_RIGHT      5
-#define PIN_STATUS_LED    2
+#define PIN_SDA             8
+#define PIN_SCL             9
+#define PIN_STATUS_LED      2
+
+// LC H-bridge pins — two pins per eye (IN_A primary, IN_B inverted)
+// Connect to DRV8833 / L298N / TB6612 AIN1/AIN2 and BIN1/BIN2
+#define PIN_LC_LEFT_A      4    // Left eye  — H-bridge IN_A
+#define PIN_LC_LEFT_B      16   // Left eye  — H-bridge IN_B (complementary)
+#define PIN_LC_RIGHT_A     5    // Right eye — H-bridge IN_A
+#define PIN_LC_RIGHT_B     17   // Right eye — H-bridge IN_B (complementary)
 
 // LC LEDC config
-#define LEDC_FREQ_HZ      50     // 50 Hz LC drive (20 ms period)
+// 120 Hz is above the flicker-fusion threshold and safe for LC cells.
+// Keep frequency ≥ 50 Hz to avoid visible flicker;
+// keep ≤ 1 kHz to stay within typical LC response time.
+#define LEDC_FREQ_HZ      120    // AC drive frequency (Hz) — zero DC offset via H-bridge
 #define LEDC_RESOLUTION   8      // 8-bit duty (0–255)
-#define LEDC_CH_LEFT      0
-#define LEDC_CH_RIGHT     1
+#define LEDC_CH_LEFT_A    0      // Primary   channel — left eye
+#define LEDC_CH_LEFT_B    1      // Inverted  channel — left eye
+#define LEDC_CH_RIGHT_A   2      // Primary   channel — right eye
+#define LEDC_CH_RIGHT_B   3      // Inverted  channel — right eye
 
 // Timing
 #define TELEMETRY_INTERVAL_MS   500   // Send a sensor packet every 500 ms
@@ -141,34 +181,80 @@ struct SensorPacket {
   float yaw_deg;
 };
 
-// ─── Utility: map duty % to 8-bit LEDC value ──────────────────────────────────
+// ─── Utility: map duty % to 8-bit LEDC value ─────────────────────────────────
 
 static uint8_t dutyPctToLedc(float pct) {
   pct = constrain(pct, 0.0f, 100.0f);
   return static_cast<uint8_t>(pct / 100.0f * 255.0f);
 }
 
-// ─── LC Shutter control ───────────────────────────────────────────────────────
+// ─── LC Shutter control (H-bridge AC drive) ───────────────────────────────────
+//
+// Each LC shutter is driven by an H-bridge using complementary PWM:
+//   IN_A runs at duty D%       → LEDC channel A
+//   IN_B runs at duty (100-D)% → LEDC channel B  (inverted)
+//
+// The LC cell sees:  V_LC = V_A − V_B
+//   D=50%  → balanced AC, net DC = 0 V  (fully transparent / open)
+//   D>50%  → net positive half-cycle dominant  (partially occluded)
+//   D<50%  → net negative half-cycle dominant  (same optical effect, opposite polarity)
+//
+// This guarantees zero DC offset across the LC cell at all duty levels,
+// protecting it from ion migration damage.
+//
+// IMPORTANT: The 50% duty baseline means "open shutter".
+//   The host sends occlusion level as 0–100%; firmware maps it to 50–MAX%.
+//   shutterDutyL/R stored as the RAW IN_A duty (50% = open, >50% = occluded).
 
 void shutterInit() {
-  ledcSetup(LEDC_CH_LEFT,  LEDC_FREQ_HZ, LEDC_RESOLUTION);
-  ledcSetup(LEDC_CH_RIGHT, LEDC_FREQ_HZ, LEDC_RESOLUTION);
-  ledcAttachPin(PIN_LC_LEFT,  LEDC_CH_LEFT);
-  ledcAttachPin(PIN_LC_RIGHT, LEDC_CH_RIGHT);
-  ledcWrite(LEDC_CH_LEFT,  0);
-  ledcWrite(LEDC_CH_RIGHT, 0);
-  Serial.println("[shutter] LEDC channels initialised");
+  // Set up all four LEDC channels at the same frequency
+  ledcSetup(LEDC_CH_LEFT_A,  LEDC_FREQ_HZ, LEDC_RESOLUTION);
+  ledcSetup(LEDC_CH_LEFT_B,  LEDC_FREQ_HZ, LEDC_RESOLUTION);
+  ledcSetup(LEDC_CH_RIGHT_A, LEDC_FREQ_HZ, LEDC_RESOLUTION);
+  ledcSetup(LEDC_CH_RIGHT_B, LEDC_FREQ_HZ, LEDC_RESOLUTION);
+
+  ledcAttachPin(PIN_LC_LEFT_A,  LEDC_CH_LEFT_A);
+  ledcAttachPin(PIN_LC_LEFT_B,  LEDC_CH_LEFT_B);
+  ledcAttachPin(PIN_LC_RIGHT_A, LEDC_CH_RIGHT_A);
+  ledcAttachPin(PIN_LC_RIGHT_B, LEDC_CH_RIGHT_B);
+
+  // Start at 50% / 50% → zero net voltage → LC cells fully open (safe default)
+  const uint8_t half = dutyPctToLedc(50.0f);
+  ledcWrite(LEDC_CH_LEFT_A,  half);
+  ledcWrite(LEDC_CH_LEFT_B,  half);
+  ledcWrite(LEDC_CH_RIGHT_A, half);
+  ledcWrite(LEDC_CH_RIGHT_B, half);
+
+  Serial.printf("[shutter] H-bridge AC drive init @ %d Hz (4 LEDC channels)\n", LEDC_FREQ_HZ);
 }
 
-void shutterSet(float dutyL, float dutyR) {
-  // Hard safety clamp — never exceed MAX_SHUTTER_DUTY_PCT
-  dutyL = constrain(dutyL, 0.0f, MAX_SHUTTER_DUTY_PCT);
-  dutyR = constrain(dutyR, 0.0f, MAX_SHUTTER_DUTY_PCT);
-  shutterDutyL = dutyL;
-  shutterDutyR = dutyR;
-  ledcWrite(LEDC_CH_LEFT,  dutyPctToLedc(dutyL));
-  ledcWrite(LEDC_CH_RIGHT, dutyPctToLedc(dutyR));
-  Serial.printf("[shutter] L=%.1f%% R=%.1f%%\n", dutyL, dutyR);
+// occlusion_pct: 0 = fully open (transparent), 100 = fully occluded
+// Internally mapped to IN_A duty 50%→MAX%, IN_B duty (100−IN_A)%.
+void shutterSet(float occlusionL, float occlusionR) {
+  // Safety clamp: occlusion cannot exceed MAX_SHUTTER_DUTY_PCT
+  occlusionL = constrain(occlusionL, 0.0f, MAX_SHUTTER_DUTY_PCT);
+  occlusionR = constrain(occlusionR, 0.0f, MAX_SHUTTER_DUTY_PCT);
+  shutterDutyL = occlusionL;
+  shutterDutyR = occlusionR;
+
+  // Map 0–100% occlusion → 50–MAX% IN_A duty  (50% = balanced AC = open)
+  const float maxDuty  = 50.0f + (MAX_SHUTTER_DUTY_PCT / 2.0f);  // e.g. 90%
+  float dutyL_A = 50.0f + (occlusionL / 100.0f) * (maxDuty - 50.0f);
+  float dutyR_A = 50.0f + (occlusionR / 100.0f) * (maxDuty - 50.0f);
+
+  // IN_B is strictly complementary → guarantees zero DC offset
+  float dutyL_B = 100.0f - dutyL_A;
+  float dutyR_B = 100.0f - dutyR_A;
+
+  ledcWrite(LEDC_CH_LEFT_A,  dutyPctToLedc(dutyL_A));
+  ledcWrite(LEDC_CH_LEFT_B,  dutyPctToLedc(dutyL_B));
+  ledcWrite(LEDC_CH_RIGHT_A, dutyPctToLedc(dutyR_A));
+  ledcWrite(LEDC_CH_RIGHT_B, dutyPctToLedc(dutyR_B));
+
+  Serial.printf("[shutter] L=%.0f%% occ (IN_A=%.1f%% IN_B=%.1f%%)  "
+                "R=%.0f%% occ (IN_A=%.1f%% IN_B=%.1f%%)\n",
+                occlusionL, dutyL_A, dutyL_B,
+                occlusionR, dutyR_A, dutyR_B);
 }
 
 // ─── Sensor reading ───────────────────────────────────────────────────────────
@@ -372,7 +458,8 @@ void sensorsInit() {
 void setup() {
   Serial.begin(115200);
   delay(100);
-  Serial.println("\n[boot] Eye Adaptive Lens System v0.2.0-S1");
+  Serial.println("\n[boot] Eye Adaptive Lens System v0.3.0-S1");
+  Serial.println("[boot] LC drive: H-bridge complementary PWM (true AC, zero DC offset)");
 
   // Status LED
   pinMode(PIN_STATUS_LED, OUTPUT);
